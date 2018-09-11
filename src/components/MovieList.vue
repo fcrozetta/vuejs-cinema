@@ -9,7 +9,7 @@
                 v-bind:time="time">
     </movie-item>
   </div>
-  <div v-else-if="movies.length" class="no-results">No Results.</div>
+  <div v-else-if="movies.length" class="no-results">{{noResults}}</div>
   <div v-else class="no-results">Loading ...</div>
 </div>
 </template>
@@ -36,7 +36,7 @@ export default {
       }
     },
     sessionPassesTimeFilter(session) {
-      if (!this.day.isSame(this.$moment(session.time, 'day'))) {
+      if (!this.day.isSame(this.$moment(session.time), 'day')) {
         return false;
       } else if (this.time.length === 0 || this.time.length === 2) {
         return true;
@@ -52,6 +52,13 @@ export default {
       return this.movies
         .filter(this.moviePassesGenreFilter)
         .filter(movie => movie.sessions.find(this.sessionPassesTimeFilter));
+    },
+    noResults() {
+      let times = this.time.join(', ');
+      let genres = this.genre.join(', ');
+      return `No Results for ${times}${
+        times.length && genres.length ? ',' : ''
+      } ${genres}`;
     },
   },
   components: {
